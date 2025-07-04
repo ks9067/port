@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kunal Sugandhi - Cyber Security Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Space+Mono:wght@400;700&family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Cyber Security Theme Colors */
+        :root {
+            --cyber-dark: #0a0a12;
+            --cyber-darker: #05050a;
+            --cyber-primary: #00ff9d;
+            --cyber-secondary: #00b4ff;
+            --cyber-accent: #ff00aa;
+            --cyber-text: #e0e0e0;
+            --cyber-text-dim: #b0b0b0;
+            --cyber-glass: rgba(10, 15, 30, 0.7);
+        }
+
+        /* General scrollbar styling */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--cyber-darker); }
+        ::-webkit-scrollbar-thumb { background: var(--cyber-primary); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--cyber-secondary); }
+
+        /* Smooth scrolling behavior */
+        .content-wrapper { scroll-behavior: smooth; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--cyber-dark);
+            color: var(--cyber-text);
+            overflow-x: hidden;
+            overflow-y: hidden;
+            font-family: 'Space Mono', monospace;
+        }
+
+        /* Cyber-themed fonts */
+        h1, h2, h3, h4, h5, h6, .btn-primary, .section-title, .btn-gemini, .btn-download {
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        /* Terminal-style text */
+        .terminal-text {
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--cyber-primary);
+        }
+
+        /* Three.js canvas container styling */
+        #three-canvas-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        /* Cyber Header Styles */
+        #cyber-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 0.75rem 1rem;
+            background-color: rgba(5, 5, 15, 0.9);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 255, 157, 0.2);
+            color: white;
+            transform: translateY(-150%);
+            opacity: 0;
+            animation: cyberHeaderAppear 0.5s 0.1s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+
+        @keyframes cyberHeaderAppear {
+            0% { transform: translateY(-150%); opacity: 0; }
+            70% { transform: translateY(8px); opacity: 0.9; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        
+        /* Cyber Nav Links */
+        .cyber-nav-link {
+            position: relative;
+            padding: 0.25rem 0;
+            color: var(--cyber-text);
+            font-weight: 500;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        #cyber-header.loaded nav .cyber-nav-link {
+            animation: navLinkFadeIn 0.4s ease forwards;
+        }
+
+        #cyber-header.loaded nav .cyber-nav-link:nth-child(1) { animation-delay: 0.1s; }
+        #cyber-header.loaded nav .cyber-nav-link:nth-child(2) { animation-delay: 0.15s; }
+        #cyber-header.loaded nav .cyber-nav-link:nth-child(3) { animation-delay: 0.2s; }
+        #cyber-header.loaded nav .cyber-nav-link:nth-child(4) { animation-delay: 0.25s; }
+        #cyber-header.loaded nav .cyber-nav-link:nth-child(5) { animation-delay: 0.3s; }
+        #cyber-header.loaded nav .cyber-nav-link:nth-child(6) { animation-delay: 0.35s; }
+
+        @keyframes navLinkFadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .cyber-nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--cyber-primary);
+            transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .cyber-nav-link:hover {
+            color: var(--cyber-primary);
+            text-shadow: 0 0 8px rgba(0, 255, 157, 0.5);
+        }
+
+        .cyber-nav-link:hover::after {
+            width: 100%;
+        }
+        
+        /* Mobile Menu */
+        #cyber-mobile-menu {
+            background-color: rgba(5, 10, 20, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(0, 255, 157, 0.15);
+        }
+
+        .cyber-nav-link-mobile { 
+            color: var(--cyber-text);
+            font-weight: 500;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            display: block;
+            padding: 0.75rem 1rem;
+            text-align: center;
+        }
+
+        .cyber-nav-link-mobile:hover {
+            background-color: rgba(0, 255, 157, 0.1);
+            color: var(--cyber-primary);
+        }
+
+        /* Active Link Styles */
+        .cyber-nav-link.active-link {
+            color: var(--cyber-primary);
+            font-weight: 600;
+            text-shadow: 0 0 8px rgba(0, 255, 157, 0.5);
+        }
+
+        .cyber-nav-link.active-link::after {
+            width: 70%;
+            background-color: var(--cyber-primary);
+        }
+
+        .cyber-nav-link.active-link:hover::after {
+            width: 100%;
+        }
+
+        .cyber-nav-link-mobile.active-link {
+            background-color: rgba(0, 255, 157, 0.2);
+            color: var(--cyber-primary);
+            font-weight: 600;
+        }
+
+        /* Main content wrapper */
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            overflow-y: auto;
+            padding-top: 70px;
+            height: 100vh;
+        }
+
+        /* Content sections */
+        .content-section {
+            position: relative;
+            z-index: 1;
+            padding: 3rem 1rem;
+            min-height: auto;
+        }
+
+        #home.content-section { 
+            min-height: calc(100vh - 70px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Cyber Buttons */
+        .btn-cyber {
+            background: linear-gradient(90deg, var(--cyber-primary), var(--cyber-secondary));
+            color: var(--cyber-darker);
+            transition: all 0.3s ease;
+            font-weight: 600;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-cyber:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 157, 0.4);
+            color: var(--cyber-darker);
+        }
+
+        .btn-cyber::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(90deg, var(--cyber-primary), var(--cyber-secondary), var(--cyber-accent));
+            z-index: -1;
+            filter: blur(4px);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .btn-cyber:hover::before {
+            opacity: 0.7;
+        }
+
+        /* Glow effects */
+        .text-glow {
+            text-shadow: 0 0 10px var(--cyber-primary), 0 0 20px rgba(0, 255, 157, 0.5);
+        }
+
+        .cyber-glow {
+            box-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+        }
+
+        /* Section titles */
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 2.5rem;
+            color: var(--cyber-primary);
+            text-align: center;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .section-title.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Cyber Cards */
+        .cyber-card {
+            background: var(--cyber-glass);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(0, 255, 157, 0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+            transform: translateY(50px) scale(0.95);
+        }
+
+        .cyber-card.is-visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .cyber-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 15px 30px rgba(0, 255, 157, 0.2);
+            border-color: var(--cyber-primary);
+        }
+
+        /* Skill Cards */
+        .skill-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+            transform: translateY(50px) scale(0.95);
+            margin: 0.5rem;
+            background: var(--cyber-glass);
+            border: 1px solid rgba(0, 180, 255, 0.2);
+        }
+
+        .skill-card.is-visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .skill-card:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 180, 255, 0.3);
+            border-color: var(--cyber-secondary);
+        }
+
+        /* Floating animations */
+        @keyframes float-subtle-1 {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-6px) rotate(1deg); }
+        }
+
+        @keyframes float-subtle-2 {
+            0%, 100% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+            25% { transform: translateY(-3px) translateX(-2px) rotate(-0.5deg); }
+            75% { transform: translateY(3px) translateX(2px) rotate(0.5deg); }
+        }
+
+        @keyframes float-subtle-3 {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(4px) scale(1.02); }
+        }
+
+        .skill-card.is-visible {
+            animation-iteration-count: infinite;
+            animation-timing-function: ease-in-out;
+        }
+
+        .skill-cloud-container .skill-card.is-visible:nth-child(6n+1) { animation-name: float-subtle-1; animation-duration: 6s; }
+        .skill-cloud-container .skill-card.is-visible:nth-child(6n+2) { animation-name: float-subtle-2; animation-duration: 7s; transform-origin: center bottom;}
+        .skill-cloud-container .skill-card.is-visible:nth-child(6n+3) { animation-name: float-subtle-3; animation-duration: 5s; animation-direction: alternate; }
+        .skill-cloud-container .skill-card.is-visible:nth-child(6n+4) { animation-name: float-subtle-1; animation-duration: 6.5s; animation-direction: reverse; transform-origin: center center;}
+        .skill-cloud-container .skill-card.is-visible:nth-child(6n+5) { animation-name: float-subtle-2; animation-duration: 5.5s; animation-direction: alternate-reverse; }
+        .skill-cloud-container .skill-card.is-visible:nth-child(6n+6) { animation-name: float-subtle-3; animation-duration: 7.5s; }
+
+        /* Back to top button */
+        #backToTopBtn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+            background-color: var(--cyber-primary);
+            color: var(--cyber-darker);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        #backToTopBtn:hover {
+            background-color: var(--cyber-secondary);
+            transform: translateY(15px) scale(1.1);
+        }
+
+        #backToTopBtn.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* Footer icons */
+        .footer-icon {
+            color: var(--cyber-text-dim);
+            transition: all 0.3s ease;
+        }
+
+        .footer-icon:hover {
+            transform: scale(1.2);
+            color: var(--cyber-primary);
+        }
+
+        /* Terminal-style lists */
+        .terminal-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .terminal-list li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--cyber-text-dim);
+        }
+
+        .terminal-list li::before {
+            content: '>';
+            position: absolute;
+            left: 0;
+            color: var(--cyber-primary);
+        }
+
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: var(--cyber-darker);
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+            border: 1px solid var(--cyber-primary);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-title {
+            font-size: 1.75rem;
+            color: var(--cyber-primary);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .btn-gemini {
+            background: linear-gradient(90deg, var(--cyber-primary), var(--cyber-secondary));
+            color: var(--cyber-darker);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-gemini:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 12px rgba(0, 255, 157, 0.4);
+        }
+
+        .btn-gemini:disabled {
+            background: #005a3c;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .btn-close-modal {
+            background-color: #003d29;
+            color: var(--cyber-text);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s ease;
+            border: none;
+        }
+
+        .btn-close-modal:hover {
+            background-color: #005a3c;
+        }
+
+        /* Project filter buttons */
+        .filter-button {
+            background-color: rgba(0, 255, 157, 0.1);
+            color: var(--cyber-text);
+            border: 1px solid rgba(0, 255, 157, 0.3);
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .filter-button:hover {
+            background-color: rgba(0, 255, 157, 0.2);
+            color: var(--cyber-primary);
+            transform: translateY(-1px);
+        }
+
+        .filter-button.active {
+            background-color: var(--cyber-primary);
+            color: var(--cyber-darker);
+            font-weight: 600;
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.3);
+        }
+
+        /* Binary rain effect for hero section */
+        .binary-rain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+            opacity: 0.15;
+        }
+
+        .binary-digit {
+            position: absolute;
+            color: var(--cyber-primary);
+            font-family: 'Share Tech Mono', monospace;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(100vh); }
+        }
+
+        /* Responsive adjustments */
+        @media (min-width: 768px) {
+            .section-title { font-size: 3.25rem; }
+            .content-section { padding: 5rem 2rem; }
+        }
+
+        @media (min-width: 768px) {
+            #mobile-menu-button { display: none; }
+        }
+
+        /* Section entry animation */
+        @keyframes section-payload-entry {
+            from { opacity: 0; transform: translateY(25px) scale(0.99); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .navigated-to-section-effect .section-entry-payload {
+            animation: section-payload-entry 0.65s 0.15s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+
+        .section-entry-payload {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .content-section:not(.navigated-to-section-effect).is-visible .section-entry-payload {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            animation: none;
+        }
+
+        /* Matrix-style border for images */
+        .matrix-border {
+            position: relative;
+            border: 2px solid transparent;
+        }
+
+        .matrix-border::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border: 2px solid var(--cyber-primary);
+            z-index: -1;
+            background: linear-gradient(45deg, 
+                transparent, transparent, 
+                var(--cyber-primary), transparent, 
+                transparent, transparent);
+            background-size: 400% 400%;
+            animation: matrixBorder 3s linear infinite;
+        }
+
+        @keyframes matrixBorder {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        /* Hacker effect for text */
+        .hacker-text {
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--cyber-primary);
+            text-shadow: 0 0 5px var(--cyber-primary);
+        }
+
+        /* Scanline effect for sections */
+        .scanlines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                rgba(0, 255, 157, 0.03) 50%,
+                rgba(0, 0, 0, 0.1) 50%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div id="three-canvas-container"></div>
+    <div class="binary-rain" id="binaryRain"></div>
+
+    <header id="cyber-header">
+        <div class="container mx-auto flex justify-center md:justify-center items-center px-4 sm:px-6 py-3 relative">
+            <nav class="hidden md:flex space-x-5 lg:space-x-6">
+                <a href="#home" class="cyber-nav-link">Home</a>
+                <a href="#about" class="cyber-nav-link">About</a>
+                <a href="#experience" class="cyber-nav-link">Experience</a>
+                <a href="#projects" class="cyber-nav-link">Projects</a>
+                <a href="#skills" class="cyber-nav-link">Skills</a>
+                <a href="#contact" class="cyber-nav-link">Contact</a>
+            </nav>
+            <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none z-10 absolute right-4 top-1/2 transform -translate-y-1/2">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+        </div>
+        <div id="cyber-mobile-menu" class="hidden md:hidden absolute top-full left-0 right-0 shadow-xl">
+            <a href="#home" class="cyber-nav-link-mobile">Home</a>
+            <a href="#about" class="cyber-nav-link-mobile">About</a>
+            <a href="#experience" class="cyber-nav-link-mobile">Experience</a>
+            <a href="#projects" class="cyber-nav-link-mobile">Projects</a>
+            <a href="#skills" class="cyber-nav-link-mobile">Skills</a>
+            <a href="#contact" class="cyber-nav-link-mobile">Contact</a>
+        </div>
+    </header>
+    
+    <div class="content-wrapper">
+        <section id="home" class="relative text-center content-section overflow-hidden">
+            <div class="section-entry-payload"> 
+                <div class="relative z-10 p-6 rounded-lg">
+                    <h1 class="text-5xl md:text-7xl font-extrabold mb-4 text-glow">
+                        <span class="text-white animate-fade-in-down block" style="animation-delay: 0.2s;">> root@kunal:~# whoami</span>
+                        <span id="hero-name" class="text-cyber-primary hacker-text animate-fade-in-down block" style="animation-delay: 0.5s;">Kunal Sugandhi</span>
+                    </h1>
+                    <p class="text-xl md:text-3xl text-cyber-secondary mb-8 animate-fade-in-up terminal-text" style="animation-delay: 0.8s;">
+                        Cyber Security Specialist | Ethical Hacker | Security Researcher
+                    </p>
+                    <a href="#projects" class="btn-cyber font-semibold py-3 px-8 rounded-lg text-lg animate-fade-in-up" style="animation-delay: 1.1s;">
+                        > view_my_work()
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="content-section">
+            <div class="section-entry-payload">
+                <div class="container mx-auto px-4 md:px-0">
+                    <h2 class="section-title animate-on-scroll">About Me</h2>
+                    <div class="max-w-3xl mx-auto text-center md:text-left flex flex-col md:flex-row items-center gap-8">
+                        <div class="w-48 h-48 md:w-60 md:h-60 rounded-full overflow-hidden flex-shrink-0 matrix-border">
+                            <img src="https://placehold.co/240x240/0a0a12/00ff9d?text=KS" alt="Kunal Sugandhi" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/240x240/0a0a12/FFFFFF?text=Error'; this.onerror=null;"/>
+                        </div>
+                        <div class="cyber-card p-6 rectangle-lg">
+                            <p class="text-lg mb-4 text-gray-300 leading-relaxed terminal-text">
+                                $> I'm a passionate cyber security specialist with expertise in penetration testing, vulnerability assessment, and secure system design. My journey in information security began when I first discovered how systems could be compromised and how to protect them.
+                            </p>
+                            <p class="text-lg mb-4 text-gray-300 leading-relaxed terminal-text">
+                                $> With a strong foundation in ethical hacking and security operations, I specialize in identifying and mitigating security risks. My approach combines technical skills with strategic thinking to build robust security architectures.
+                            </p>
+                            <p class="text-lg text-gray-300 leading-relaxed terminal-text">
+                                $> When I'm not hunting vulnerabilities or hardening systems, I contribute to open-source security tools and participate in bug bounty programs. My goal is to make the digital world a safer place, one system at a time.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="experience" class="content-section">
+            <div class="section-entry-payload">
+                <div class="container mx-auto px-4 md:px-0">
+                    <h2 class="section-title animate-on-scroll">Professional Experience</h2>
+                    <div class="space-y-8">
+                        <div class="cyber-card p-6 md:p-8 rounded-lg animate-on-scroll">
+                            <h3 class="text-2xl md:text-3xl font-semibold mb-2 text-cyber-primary">Security Operations Center Analyst</h3>
+                            <p class="text-lg text-cyber-secondary mb-1">SecureNet Solutions</p>
+                            <p class="text-md text-gray-400 mb-4">JAN 2023 - PRESENT</p>
+                            <ul class="terminal-list">
+                                <li>Monitor and analyze security events from various sources including SIEM, IDS/IPS, and endpoint protection systems</li>
+                                <li>Investigate security incidents and coordinate response activities across teams</li>
+                                <li>Develop and refine detection rules to improve threat identification</li>
+                                <li>Conduct threat hunting exercises to identify potential compromises</li>
+                            </ul>
+                        </div>
+                        <div class="cyber-card p-6 md:p-8 rounded-lg animate-on-scroll">
+                            <h3 class="text-2xl md:text-3xl font-semibold mb-2 text-cyber-primary">Penetration Tester</h3>
+                            <p class="text-lg text-cyber-secondary mb-1">VulnScan Security</p>
+                            <p class="text-md text-gray-400 mb-4">MAR 2021 - DEC 2022</p>
+                            <ul class="terminal-list">
+                                <li>Conducted comprehensive penetration tests for web applications, networks, and APIs</li>
+                                <li>Developed custom scripts and tools to automate security testing processes</li>
+                                <li>Delivered detailed reports with actionable remediation recommendations</li>
+                                <li>Performed social engineering tests including phishing simulations</li>
+                            </ul>
+                        </div>
+                        <div class="cyber-card p-6 md:p-8 rounded-lg animate-on-scroll">
+                            <h3 class="text-2xl md:text-3xl font-semibold mb-2 text-cyber-primary">Security Research Intern</h3>
+                            <p class="text-lg text-cyber-secondary mb-1">CyberDefense Labs</p>
+                            <p class="text-md text-gray-400 mb-4">JUN 2020 - FEB 2021</p>
+                            <ul class="terminal-list">
+                                <li>Researched emerging threats and vulnerabilities in IoT devices</li>
+                                <li>Assisted in developing proof-of-concept exploits for identified vulnerabilities</li>
+                                <li>Contributed to the development of a threat intelligence platform</li>
+                                <li>Participated in red team exercises and capture-the-flag competitions</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="content-section">
+            <div class="section-entry-payload">
+                <div class="container mx-auto px-4 md:px-0">
+                    <div class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+                        <h2 class="section-title animate-on-scroll !text-center sm:!text-left !mb-0">Security Projects</h2>
+                        <button id="openGeminiModalBtn" class="btn-gemini whitespace-nowrap">
+                            <i class="fas fa-terminal"></i> Generate Project Ideas
+                        </button>
+                    </div>
+
+                    <div id="project-filter-buttons" class="flex flex-wrap justify-center gap-2 mb-10">
+                        <button class="filter-button active" data-filter="all">All</button>
+                        <button class="filter-button" data-filter="pentesting">Penetration Testing</button>
+                        <button class="filter-button" data-filter="tool">Security Tools</button>
+                        <button class="filter-button" data-filter="research">Research</button>
+                    </div>
+
+                    <div id="project-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 stagger-animate">
+                        <div class="cyber-card p-6 rounded-lg animate-on-scroll" data-tags="pentesting">
+                            <h3 class="text-2xl font-semibold mb-3 text-cyber-primary">Automated Web App Scanner</h3>
+                            <p class="text-gray-400 mb-4 leading-relaxed terminal-text">
+                                $> Developed an automated scanner that identifies common web vulnerabilities (SQLi, XSS, CSRF) with 95% accuracy. Integrated with Burp Suite API for comprehensive testing.
+                            </p>
+                            <span class="inline-block bg-cyber-dark hover:bg-cyber-primary text-cyber-primary text-xs font-semibold mr-2 mb-2 px-2.5 py-0.5 rounded-full transition-colors border border-cyber-primary">Python</span>
+                            <span class="inline-block bg-cyber-dark hover:bg-cyber-primary text-cyber-primary text-xs font-semibold mr-2 mb-2 px-2.5 py-0.5 rounded-full transition-colors border border-cyber-primary">Burp Suite</span>
+                        </div>
+                        <div class="cyber-card p-6 rounded-lg animate-on-scroll" data-tags="tool">
+                            <h3 class="text-2xl font-semibold mb-3 text-cyber-primary">Custom SIEM Rules</h3>
+                            <p class="text-gray-400 mb-4 leading-relaxed terminal-text">
+                                $> Created a collection of custom SIEM detection rules that improved threat detection by 40%. Rules focus on lateral movement, data exfiltration, and suspicious authentication patterns.
+                            </p>
+                            <span class="inline-block bg-cyber-dark hover:bg-cyber-primary text-cyber-primary text-xs font-semibold mr-2 mb-2 px-2.5 py-0.5 rounded-full transition-colors border border-cyber-primary">Splunk</span>
+                            <span class="inline-block bg-cyber-dark hover:bg-cyber-primary text-cyber-primary text-xs font-semibold mr-2 mb-2 px-2.5 py-0.5 rounded-full transition-colors border border-cyber-primary">Sigma</span>
+                        </div>
+                        <div class="cyber-card p-6 rounded-lg animate-on-scroll" data-tags="research">
+                            <h3 class="text-2xl font-semibold mb-3 text-cyber-primary">IoT Security Research</h3>
+                            <p class="text-gray-400 mb-4 leading-relaxed terminal-text">
+                                $> Discovered and responsibly disclosed 3 critical vulnerabilities in popular IoT devices. Developed proof-of-concept exploits and mitigation strategies for affected vendors.
+                            </p>
+                            <span class="inline-block bg-cyber-dark hover:bg-cyber-primary text-cyber-primary text-xs font-semibold mr-2 mb-2 px-2.5 py-0.5 rounded-full transition-colors border border-cyber-primary">CVE</span>
+                            <span class="inline-block bg-cyber-dark hover:bg-cyber-primary text-cyber-primary text-xs font-semibold mr-2 mb-2 px-2.5 py-0.5 rounded-full transition-colors border border-cyber-primary">Reverse Engineering</span>
+                        </div>
+                        <div class="cyber-card p-6 rounded-lg animate-on-scroll" data-tags="pentesting">
+                            <h3 class="text-2xl font-semibold mb-3 text-cyber-primary">Red Team Toolkit</h3>
+                            <p class="text-gray-400 mb-4 leading-relaxed terminal-text">
+                                $> Built a collection of custom tools for red team operations including privilege escalation, persistence, and lateral movement techniques. Toolkit is designed to evade common EDR solutions.
+                            </p>
+                            <span class="inline-block bg-cyber-dark hover:bg-cyber-primary text-cyber-primary text-xs font-semibold mr-2 mb-2 px-2.5 py-0.5 rounded-full transition-colors border border-cyber-primary">C#</span>
+                            <span class="inline-block bg-cyber-dark hover:bg-cyber-primary text-cyber-primary text-xs font-semibold mr-2 mb-2 px-2.5 py-0.5 rounded-full transition-colors border border-cyber-primary">PowerShell</span>
+                        </div>
+                        <div class="cyber-card p-6 rounded-lg animate-on-scroll" data-tags="tool">
+                            <h3 class="text-2xl font-semibold mb-3 text-cyber-primary">Password Policy Auditor</h3>
+                            <p class="text-gray-400 mb-4 leading-relaxed terminal-text">
+                                $> Created a tool that analyzes password policies across Active Directory and cloud services, identifying weak configurations and recommending improvements based on NIST guidelines.
+                            </p>
+                            <span class="inline-block bg-cyber-dark hover:bg-cyber-primary text-cyber-primary text-xs font-semibold mr-2 mb-2 px-2.5 py-0.5 rounded-full transition-colors border border-cyber-primary">Python</span>
+                            <span class="inline-block bg-cyber-dark hover:bg-cyber-primary text-cyber-primary text-xs font-semibold mr-2 mb-2 px-2.5 py-0.5 rounded-full transition-colors border border-cyber-primary">Active Directory</span>
+                        </div>
+                        <div class="cyber-card p-6 rounded-lg animate-on-scroll" data-tags="research">
+                            <h3 class="text-2xl font-semibold mb-3 text-cyber-primary">Threat Intelligence Feed</h3>
+                            <p class="text-gray-400 mb-4 leading-relaxed terminal-text">
+                                $> Developed a curated threat intelligence feed aggregating data from open sources, dark web monitoring, and internal telemetry. Feed reduced time-to-detect for emerging threats by 35%.
+                            </p>
+                            <span class="inline-block bg-cyber-dark hover:bg-cyber-primary text-cyber-primary text-xs font-semibold mr-2 mb-2 px-2.5 py-0.5 rounded-full transition-colors border border-cyber-primary">Python</span>
+                            <span class="inline-block bg-cyber-dark hover:bg-cyber-primary text-cyber-primary text-xs font-semibold mr-2 mb-2 px-2.5 py-0.5 rounded-full transition-colors border border-cyber-primary">MISP</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="skills" class="content-section">
+            <div class="section-entry-payload">
+                <div class="container mx-auto px-4 md:px-0">
+                    <h2 class="section-title animate-on-scroll">Technical Skills</h2>
+                    <div class="flex flex-wrap justify-center items-center gap-x-2 gap-y-4 text-center stagger-animate skill-cloud-container">
+                        <div class="skill-card p-4 md:p-6 rounded-lg animate-on-scroll">
+                            <div class="text-4xl md:text-5xl mb-2 md:mb-3 text-cyber-primary"><i class="fas fa-shield-alt"></i></div>
+                            <h3 class="text-lg md:text-xl font-semibold text-gray-200">Penetration Testing</h3>
+                        </div>
+                        <div class="skill-card p-4 md:p-6 rounded-lg animate-on-scroll">
+                            <div class="text-4xl md:text-5xl mb-2 md:mb-3 text-cyber-primary"><i class="fas fa-search"></i></div>
+                            <h3 class="text-lg md:text-xl font-semibold text-gray-200">Vulnerability Assessment</h3>
+                        </div>
+                        <div class="skill-card p-4 md:p-6 rounded-lg animate-on-scroll">
+                            <div class="text-4xl md:text-5xl mb-2 md:mb-3 text-cyber-primary"><i class="fas fa-bug"></i></div>
+                            <h3 class="text-lg md:text-xl font-semibold text-gray-200">Exploit Development</h3>
+                        </div>
+                        <div class="skill-card p-4 md:p-6 rounded-lg animate-on-scroll">
+                            <div class="text-4xl md:text-5xl mb-2 md:mb-3 text-cyber-primary"><i class="fas fa-network-wired"></i></div>
+                            <h3 class="text-lg md:text-xl font-semibold text-gray-200">Network Security</h3>
+                        </div>
+                        <div class="skill-card p-4 md:p-6 rounded-lg animate-on-scroll">
+                            <div class="text-4xl md:text-5xl mb-2 md:mb-3 text-cyber-primary"><i class="fas fa-lock"></i></div>
+                            <h3 class="text-lg md:text-xl font-semibold text-gray-200">Cryptography</h3>
+                        </div>
+                        <div class="skill-card p-4 md:p-6 rounded-lg animate-on-scroll">
+                            <div class="text-4xl md:text-5xl mb-2 md:mb-3 text-cyber-primary"><i class="fas fa-code"></i></div>
+                            <h3 class="text-lg md:text-xl font-semibold text-gray-200">Secure Coding</h3>
+                        </div>
+                        <div class="skill-card p-4 md:p-6 rounded-lg animate-on-scroll">
+                            <div class="text-4xl md:text-5xl mb-2 md:mb-3 text-cyber-primary"><i class="fas fa-user-secret"></i></div>
+                            <h3 class="text-lg md:text-xl font-semibold text-gray-200">Social Engineering</h3>
+                        </div>
+                        <div class="skill-card p-4 md:p-6 rounded-lg animate-on-scroll">
+                            <div class="text-4xl md:text-5xl mb-2 md:mb-3 text-cyber-primary"><i class="fas fa-cloud"></i></div>
+                            <h3 class="text-lg md:text-xl font-semibold text-gray-200">Cloud Security</h3>
+                        </div>
+                        <div class="skill-card p-4 md:p-6 rounded-lg animate-on-scroll">
+                            <div class="text-4xl md:text-5xl mb-2 md:mb-3 text-cyber-primary"><i class="fas fa-mobile-alt"></i></div>
+                            <h3 class="text-lg md:text-xl font-semibold text-gray-200">Mobile Security</h3>
+                        </div>
+                        <div class="skill-card p-4 md:p-6 rounded-lg animate-on-scroll">
+                            <div class="text-4xl md:text-5xl mb-2 md:mb-3 text-cyber-primary"><i class="fas fa-microchip"></i></div>
+                            <h3 class="text-lg md:text-xl font-semibold text-gray-200">IoT Security</h3>
+                        </div>
+                        <div class="skill-card p-4 md:p-6 rounded-lg animate-on-scroll">
+                            <div class="text-4xl md:text-5xl mb-2 md:mb-3 text-cyber-primary"><i class="fas fa-robot"></i></div>
+                            <h3 class="text-lg md:text-xl font-semibold text-gray-200">Malware Analysis</h3>
+                        </div>
+                        <div class="skill-card p-4 md:p-6 rounded-lg animate-on-scroll">
+                            <div class="text-4xl md:text-5xl mb-2 md:mb-3 text-cyber-primary"><i class="fas fa-flag"></i></div>
+                            <h3 class="text-lg md:text-xl font-semibold text-gray-200">Threat Intelligence</h3>
+                        </div>
+                        <div class="skill-card p-4 md:p-6 rounded-lg animate-on-scroll">
+                            <div class="text-4xl md:text-5xl mb-2 md:mb-3 text-cyber-primary"><i class="fas fa-terminal"></i></div>
+                            <h3 class="text-lg md:text-xl font-semibold text-gray-200">Scripting</h3>
+                        </div>
+                        <div class="skill-card p-4 md:p-6 rounded-lg animate-on-scroll">
+                            <div class="text-4xl md:text-5xl mb-2 md:mb-3 text-cyber-primary"><i class="fas fa-database"></i></div>
+                            <h3 class="text-lg md:text-xl font-semibold text-gray-200">Forensics</h3>
+                        </div>
+                        <div class="skill-card p-4 md:p-6 rounded-lg animate-on-scroll">
+                            <div class="text-4xl md:text-5xl mb-2 md:mb-3 text-cyber-primary"><i class="fas fa-tools"></i></div>
+                            <h3 class="text-lg md:text-xl font-semibold text-gray-200">Security Tools</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="content-section">
+            <div class="section-entry-payload">
+                <div class="container mx-auto px-4 md:px-0">
+                    <h2 class="section-title animate-on-scroll">Contact Me</h2>
+                    <div class="max-w-xl mx-auto cyber-card p-8 rounded-lg animate-on-scroll">
+                        <p class="text-center text-lg text-gray-300 mb-6 leading-relaxed terminal-text">
+                            $> Interested in collaborating or have a security challenge? Get in touch!
+                        </p>
+                        <form action="https://formspree.io/f/xrbkjjdb" method="POST">
+                            <div class="mb-5">
+                                <label for="name" class="block mb-2 text-sm font-medium text-cyber-primary">Your Name</label>
+                                <input type="text" id="name" name="name" class="w-full p-3 rounded-lg bg-cyber-darker border border-cyber-primary focus:ring-cyber-primary focus:border-cyber-primary text-white placeholder-gray-500 terminal-text" placeholder="> Enter your name" required>
+                            </div>
+                            <div class="mb-5">
+                                <label for="email" class="block mb-2 text-sm font-medium text-cyber-primary">Your Email</label>
+                                <input type="email" id="email" name="_replyto" class="w-full p-3 rounded-lg bg-cyber-darker border border-cyber-primary focus:ring-cyber-primary focus:border-cyber-primary text-white placeholder-gray-500 terminal-text" placeholder="> Enter your email" required>
+                            </div>
+                            <div class="mb-5">
+                                <label for="message" class="block mb-2 text-sm font-medium text-cyber-primary">Message</label>
+                                <textarea id="message" name="message" rows="4" class="w-full p-3 rounded-lg bg-cyber-darker border border-cyber-primary focus:ring-cyber-primary focus:border-cyber-primary text-white placeholder-gray-500 terminal-text" placeholder="> Type your message here..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn-cyber w-full font-semibold py-3 px-6 rounded-lg text-lg">
+                                > send_message()
+                            </button>
+                        </form>
+                        <p class="text-center text-xs text-gray-500 mt-4 terminal-text">$> Form secured with AES-256 encryption</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="py-12 text-center bg-cyber-darker border-t border-cyber-primary">
+            <div class="container mx-auto">
+                <div class="mb-6">
+                    <h3 class="text-2xl font-semibold text-cyber-primary mb-4">Connect With Me</h3>
+                    <div class="flex justify-center space-x-6">
+                        <a href="https://www.linkedin.com/in/kunal-sugandhi" target="_blank" rel="noopener noreferrer" class="footer-icon" aria-label="LinkedIn Profile">
+                            <i class="fab fa-linkedin fa-2x"></i>
+                        </a>
+                        <a href="https://github.com/ks9067" target="_blank" rel="noopener noreferrer" class="footer-icon" aria-label="GitHub Profile">
+                            <i class="fab fa-github fa-2x"></i>
+                        </a>
+                        <a href="https://twitter.com/securekunal" target="_blank" rel="noopener noreferrer" class="footer-icon" aria-label="Twitter Profile">
+                            <i class="fab fa-twitter fa-2x"></i>
+                        </a>
+                        <a href="https://www.hackthebox.com/profile/ks9067" target="_blank" rel="noopener noreferrer" class="footer-icon" aria-label="HackTheBox Profile">
+                            <i class="fas fa-cube fa-2x"></i>
+                        </a>
+                        <a href="mailto:kunalsugandhi007@gmail.com" class="footer-icon" aria-label="Email Me">
+                            <i class="fas fa-envelope fa-2x"></i>
+                        </a>
+                    </div>
+                </div>
+                <p class="text-gray-400 terminal-text">&gt; Copyright <span id="currentYear"></span> Kunal Sugandhi. All rights reserved.</p>
+                <p class="text-sm text-cyber-primary terminal-text">$> Securely crafted with <span class="text-red-500">&hearts;</span>, Three.js & TailwindCSS</p>
+                <p class="text-xs text-gray-600 mt-2 terminal-text">$> Last updated: 2024-06-15 | Version 2.3.1</p>
+            </div>
+        </footer>
+    </div>
+
+    <div id="geminiModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="modal-title">Project Idea Generator</h3>
+                <button id="closeGeminiModalBtn" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            <div id="geminiResponseContainer" class="text-gray-300 space-y-4 terminal-text">
+                <p>$> Click the button below to generate security project ideas tailored to your skillset</p>
+            </div>
+            <div id="geminiLoader" class="hidden loader"></div>
+            <div class="mt-6 flex justify-end space-x-3">
+                <button id="getProjectIdeasBtn" class="btn-gemini">
+                    <i class="fas fa-terminal"></i> Generate Ideas
+                </button>
+                <button id="closeGeminiModalBtnBottom" class="btn-close-modal">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <button id="backToTopBtn" title="Go to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // --- Three.js Background Animation (Cyber Theme) ---
+        let scene, camera, renderer, particles, particleSystem;
+        const canvasContainer = document.getElementById('three-canvas-container');
+        
+        function initThreeJS() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, canvasContainer.offsetWidth / canvasContainer.offsetHeight, 0.1, 1000);
+            camera.position.z = 30;
+            
+            renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(canvasContainer.offsetWidth, canvasContainer.offsetHeight);
+            renderer.setClearColor(0x000000, 0);
+            canvasContainer.appendChild(renderer.domElement);
+            
+            // Create cyber grid
+            const gridHelper = new THREE.GridHelper(100, 100, 0x00ff9d, 0x003d29);
+            gridHelper.position.y = -10;
+            scene.add(gridHelper);
+            
+            // Create cyber particles
+            const particleCount = 1000;
+            particles = new THREE.BufferGeometry();
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+            
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * 200;
+                positions[i * 3 + 1] = (Math.random() - 0.5) * 200;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 200;
+                
+                colors[i * 3] = Math.random() * 0.5 + 0.5; // Greenish
+                colors[i * 3 + 1] = Math.random() * 0.2 + 0.8;
+                colors[i * 3 + 2] = Math.random() * 0.5;
+            }
+            
+            particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            
+            const particleMaterial = new THREE.PointsMaterial({
+                size: 0.5,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending
+            });
+            
+            particleSystem = new THREE.Points(particles, particleMaterial);
+            scene.add(particleSystem);
+            
+            // Add cyber "laser" lines
+            const lineGeometry = new THREE.BufferGeometry();
+            const linePositions = new Float32Array([
+                -20, 0, 0,
+                20, 0, 0,
+                0, -20, 0,
+                0, 20, 0,
+                0, 0, -20,
+                0, 0, 20
+            ]);
+            lineGeometry.setAttribute('position', new THREE.BufferAttribute(linePositions, 3));
+            
+            const lineMaterial = new THREE.LineBasicMaterial({ color: 0x00ff9d, transparent: true, opacity: 0.3 });
+            const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
+            scene.add(lines);
+            
+            window.addEventListener('resize', onWindowResizeThreeJS, false);
+            onWindowResizeThreeJS();
+        }
+        
+        function onWindowResizeThreeJS() {
+            if (camera && renderer && canvasContainer) {
+                camera.aspect = canvasContainer.offsetWidth / canvasContainer.offsetHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(canvasContainer.offsetWidth, canvasContainer.offsetHeight);
+            }
+        }
+        
+        function animateThreeJS() {
+            requestAnimationFrame(animateThreeJS);
+            
+            if (particleSystem) {
+                particleSystem.rotation.x += 0.0005;
+                particleSystem.rotation.y += 0.001;
+            }
+            
+            if (renderer && scene && camera) {
+                renderer.render(scene, camera);
+            }
+        }
+
+        // Binary rain effect
+        function createBinaryRain() {
+            const binaryRain = document.getElementById('binaryRain');
+            const characters = ['0', '1'];
+            const columns = Math.floor(window.innerWidth / 20);
+            
+            for (let i = 0; i < columns; i++) {
+                const digit = document.createElement('div');
+                digit.className = 'binary-digit';
+                digit.textContent = characters[Math.floor(Math.random() * characters.length)];
+                digit.style.left = `${(i * 20) + (Math.random() * 10)}px`;
+                digit.style.animationDuration = `${5 + Math.random() * 10}s`;
+                digit.style.animationDelay = `${Math.random() * 5}s`;
+                digit.style.opacity = Math.random();
+                binaryRain.appendChild(digit);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initThreeJS();
+            animateThreeJS();
+            createBinaryRain();
+
+            const cyberHeader = document.getElementById('cyber-header'); 
+            const backToTopButton = document.getElementById('backToTopBtn');
+            const openGeminiModalBtn = document.getElementById('openGeminiModalBtn');
+            const mobileMenuButton = document.getElementById('mobile-menu-button'); 
+            const mobileMenu = document.getElementById('cyber-mobile-menu'); 
+            const currentYearEl = document.getElementById('currentYear');
+            const heroNameSpan = document.getElementById('hero-name'); 
+            
+            const contentWrapper = document.querySelector('.content-wrapper');
+            const sections = Array.from(document.querySelectorAll('.content-section[id]')); 
+            const navLinksDesktop = document.querySelectorAll('#cyber-header nav .cyber-nav-link');
+            const navLinksMobile = document.querySelectorAll('#cyber-mobile-menu .cyber-nav-link-mobile');
+            let scrollTimeout; 
+            let navClickScroll = false; 
+
+            if (cyberHeader) { 
+                setTimeout(() => cyberHeader.classList.add('loaded'), 600); 
+            }
+
+            if (backToTopButton && contentWrapper) {
+                contentWrapper.addEventListener('scroll', () => {
+                    backToTopButton.classList.toggle('show', contentWrapper.scrollTop > 300);
+                });
+                backToTopButton.addEventListener('click', () => {
+                    contentWrapper.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+            
+            if (mobileMenuButton && mobileMenu) { 
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                    const isOpen = !mobileMenu.classList.contains('hidden');
+                    mobileMenuButton.innerHTML = isOpen 
+                        ? `<svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>` 
+                        : `<svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>`;
+                });
+                mobileMenu.querySelectorAll('a.cyber-nav-link-mobile').forEach(link => { 
+                    link.addEventListener('click', () => {
+                        mobileMenu.classList.add('hidden');
+                        mobileMenuButton.innerHTML = `<svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>`; 
+                    });
+                });
+            }
+            
+            if (currentYearEl) currentYearEl.textContent = new Date().getFullYear();
+
+            const animatedElements = document.querySelectorAll('.animate-on-scroll'); 
+            const observerOptions = { root: contentWrapper, rootMargin: '0px', threshold: 0.1 };
+
+            if (typeof IntersectionObserver !== 'undefined' && contentWrapper) {
+                const elementObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                           entry.target.classList.add('is-visible');
+                        }
+                    });
+                }, observerOptions); 
+                animatedElements.forEach(el => elementObserver.observe(el));
+            } else { 
+                animatedElements.forEach(el => el.classList.add('is-visible'));
+            }
+
+            function initCustomCursorEffect() {
+                const particleColors = ["#00ff9d", "#00b4ff", "#ff00aa", "#ffffff"];
+                
+                function createParticle(x, y) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('cursor-particle');
+                    document.body.appendChild(particle);
+                    const size = Math.random() * 6 + 3;
+                    const color = particleColors[Math.floor(Math.random() * particleColors.length)];
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    particle.style.backgroundColor = color;
+                    particle.style.left = `${x}px`;
+                    particle.style.top = `${y}px`;
+                    void particle.offsetWidth; 
+                    const randomX = (Math.random() - 0.5) * 30;
+                    const randomY = (Math.random() - 0.5) * 30;
+                    particle.style.opacity = '0';
+                    particle.style.transform = `translate(-50%, -50%) translate(${randomX}px, ${randomY}px) scale(0.1)`;
+                    setTimeout(() => {
+                        if (particle.parentNode) particle.parentNode.removeChild(particle);
+                    }, 600);
+                }
+
+                document.body.addEventListener('mousemove', function(e) {
+                    createParticle(e.pageX, e.pageY);
+                });
+
+                document.body.addEventListener('touchmove', function(e) {
+                    if (e.touches.length > 0) {
+                        const touch = e.touches[0];
+                        createParticle(touch.pageX, touch.pageY);
+                    }
+                }, { passive: true });
+            }
+            initCustomCursorEffect();
+
+            function initKonamiCode() {
+                const konamiSequence = ['arrowup', 'arrowup', 'arrowdown', 'arrowdown', 'arrowleft', 'arrowright', 'arrowleft', 'arrowright', 'b', 'a']; 
+                let userInputSequence = [];
+                const targetNameElement = document.getElementById('hero-name'); 
+                document.addEventListener('keydown', function(e) {
+                    if (!targetNameElement) return;
+                    const key = e.key.toLowerCase(); 
+                    userInputSequence.push(key);
+                    if (userInputSequence.length > konamiSequence.length) {
+                        userInputSequence.shift(); 
+                    }
+                    if (userInputSequence.length === konamiSequence.length && userInputSequence.every((val, index) => val === konamiSequence[index])) {
+                        console.log("Konami Code Activated!"); 
+                        targetNameElement.classList.add('konami-name-effect');
+                        setTimeout(() => {
+                            targetNameElement.classList.remove('konami-name-effect');
+                        }, 800); 
+                        userInputSequence = []; 
+                    }
+                });
+            }
+            initKonamiCode();
+
+            const filterButtonsContainer = document.getElementById('project-filter-buttons');
+            const projectCardElements = document.querySelectorAll('#project-grid .cyber-card'); 
+
+            if (filterButtonsContainer && projectCardElements.length > 0) {
+                filterButtonsContainer.addEventListener('click', function(e) {
+                    if (e.target && e.target.matches('button.filter-button')) {
+                        const filterValue = e.target.dataset.filter;
+                        filterButtonsContainer.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
+                        e.target.classList.add('active');
+                        projectCardElements.forEach(card => {
+                            const tags = card.dataset.tags ? card.dataset.tags.split(' ') : [];
+                            if (filterValue === 'all' || tags.includes(filterValue)) {
+                                card.classList.remove('project-card-hidden');
+                                card.classList.remove('is-visible');
+                                void card.offsetWidth;
+                                requestAnimationFrame(() => {
+                                   card.classList.add('is-visible');
+                                });
+                            } else {
+                                card.classList.add('project-card-hidden');
+                                card.classList.remove('is-visible');
+                            }
+                        });
+                    }
+                });
+            }
+
+            function updateActiveLinkOnScrollLogic() {
+                if (navClickScroll) return; 
+                if (!contentWrapper || !cyberHeader || sections.length === 0) return;
+                const headerHeight = cyberHeader.offsetHeight;
+                const viewportCenterLine = headerHeight + (contentWrapper.clientHeight - headerHeight) * 0.3;
+                let currentSectionId = '';
+                let minDistanceToCenter = Infinity;
+                sections.forEach(section => {
+                    const sectionRect = section.getBoundingClientRect();
+                    const sectionTopRelativeToViewport = sectionRect.top;
+                    const sectionBottomRelativeToViewport = sectionRect.bottom;
+                    if (sectionTopRelativeToViewport < contentWrapper.clientHeight && sectionBottomRelativeToViewport > headerHeight) {
+                        const effectiveSectionTop = Math.max(sectionTopRelativeToViewport, headerHeight);
+                        const distance = Math.abs(effectiveSectionTop - viewportCenterLine);
+                        if (distance < minDistanceToCenter) {
+                            minDistanceToCenter = distance;
+                            currentSectionId = section.id;
+                        } else if (distance === minDistanceToCenter && sectionTopRelativeToViewport > headerHeight) {
+                             currentSectionId = section.id;
+                        }
+                    }
+                });
+                if (contentWrapper.scrollTop < 50 && sections.length > 0) {
+                    currentSectionId = sections[0].id;
+                } else if (contentWrapper.scrollTop + contentWrapper.clientHeight >= contentWrapper.scrollHeight - 5 && sections.length > 0) {
+                     currentSectionId = sections[sections.length - 1].id;
+                }
+                [navLinksDesktop, navLinksMobile].forEach(linkSet => {
+                    linkSet.forEach(link => {
+                        link.classList.remove('active-link');
+                        if (link.getAttribute('href') === `#${currentSectionId}`) {
+                            link.classList.add('active-link');
+                        }
+                    });
+                });
+            }
+            
+            function throttledUpdateActiveLink() {
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(updateActiveLinkOnScrollLogic, 100); 
+            }
+
+            if (contentWrapper) {
+                contentWrapper.addEventListener('scroll', throttledUpdateActiveLink);
+                setTimeout(updateActiveLinkOnScrollLogic, 300); 
+            }
+            window.addEventListener('resize', () => { 
+                if (contentWrapper) setTimeout(updateActiveLinkOnScrollLogic, 300);
+            });
+
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    navClickScroll = true; 
+
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+
+                    document.querySelectorAll('.content-section.navigated-to-section-effect').forEach(sec => {
+                        if (sec !== targetElement) { 
+                            sec.classList.remove('navigated-to-section-effect');
+                            const payload = sec.querySelector('.section-entry-payload');
+                            if(payload) {
+                               payload.style.animation = 'none'; 
+                               void payload.offsetWidth; 
+                               payload.style.opacity = ''; 
+                               payload.style.transform = ''; 
+                            }
+                        }
+                    });
+
+                    if (targetElement && contentWrapper && cyberHeader) {
+                        const headerOffset = cyberHeader.offsetHeight;
+                        let cumulativeOffsetTop = 0;
+                        let currentElement = targetElement;
+                        while(currentElement && currentElement !== contentWrapper) {
+                            cumulativeOffsetTop += currentElement.offsetTop;
+                            currentElement = currentElement.offsetParent;
+                        }
+                        if (!currentElement && targetElement.offsetParent !== contentWrapper) {
+                             const targetTopInViewport = targetElement.getBoundingClientRect().top;
+                             const contentWrapperTopInViewport = contentWrapper.getBoundingClientRect().top;
+                             cumulativeOffsetTop = targetTopInViewport - contentWrapperTopInViewport + contentWrapper.scrollTop;
+                        }
+                        let finalScrollPosition;
+                        if (targetId === "#home") {
+                            finalScrollPosition = 0; 
+                        } else {
+                            finalScrollPosition = cumulativeOffsetTop - headerOffset - 20; 
+                        }
+                        finalScrollPosition = Math.max(0, finalScrollPosition);
+                        finalScrollPosition = Math.min(finalScrollPosition, contentWrapper.scrollHeight - contentWrapper.clientHeight);
+                        
+                        contentWrapper.scrollTo({
+                            top: finalScrollPosition,
+                            behavior: 'smooth'
+                        });
+                        
+                        setTimeout(() => {
+                            if (targetElement.classList.contains('content-section')) {
+                                const payload = targetElement.querySelector('.section-entry-payload');
+                                if (payload) {
+                                    payload.style.opacity = '0'; 
+                                    void payload.offsetWidth; 
+                                }
+                                targetElement.classList.add('navigated-to-section-effect');
+                            }
+                            setTimeout(() => { navClickScroll = false; }, 800); 
+                        }, 150); 
+
+                    } else {
+                        navClickScroll = false; 
+                    }
+                });
+            });
+
+            const heroElements = document.querySelectorAll('.animate-fade-in-down, .animate-fade-in-up');
+            heroElements.forEach(el => {
+                el.style.opacity = '0';
+                el.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
+                if (el.classList.contains('animate-fade-in-down')) el.style.transform = 'translateY(-20px)';
+                else el.style.transform = 'translateY(20px)';
+                const delayValue = getComputedStyle(el).getPropertyValue('animation-delay');
+                const delay = delayValue ? parseFloat(delayValue) * 1000 : 0;
+                setTimeout(() => {
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, delay);
+            });
+            
+            const geminiModal = document.getElementById('geminiModal'); 
+            const getProjectIdeasBtn = document.getElementById('getProjectIdeasBtn');
+            const geminiResponseContainer = document.getElementById('geminiResponseContainer');
+            const geminiLoader = document.getElementById('geminiLoader');
+            const closeGeminiModalBtn = document.getElementById('closeGeminiModalBtn');
+            const closeGeminiModalBtnBottom = document.getElementById('closeGeminiModalBtnBottom');
+
+            if (openGeminiModalBtn && geminiModal) {
+                openGeminiModalBtn.addEventListener('click', () => geminiModal.classList.add('active'));
+            }
+            if (closeGeminiModalBtn && geminiModal) {
+                closeGeminiModalBtn.addEventListener('click', () => geminiModal.classList.remove('active'));
+            }
+            if (closeGeminiModalBtnBottom && geminiModal) {
+                closeGeminiModalBtnBottom.addEventListener('click', () => geminiModal.classList.remove('active'));
+            }
+            if (geminiModal) {
+                 geminiModal.addEventListener('click', (event) => { 
+                    if (event.target === geminiModal) {
+                        geminiModal.classList.remove('active');
+                    }
+                });
+            }
+
+            if (getProjectIdeasBtn) {
+                getProjectIdeasBtn.addEventListener('click', async () => {
+                    geminiLoader.classList.remove('hidden'); 
+                    getProjectIdeasBtn.disabled = true; 
+                    geminiResponseContainer.innerHTML = ''; 
+                    const userSkills = "Penetration Testing, Vulnerability Assessment, Exploit Development, Network Security, Cryptography, Secure Coding, Social Engineering, Cloud Security, Mobile Security, IoT Security, Malware Analysis, Threat Intelligence, Scripting, Forensics, Security Tools";
+                    const prompt = `I am a cyber security professional with expertise in: ${userSkills}. Please generate 3 innovative security project ideas that I could undertake to showcase these skills. For each project idea, provide a catchy title and a brief 2-3 sentence description highlighting the security aspects and technologies involved. Format each idea clearly with the title as a heading.`;
+                    let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+                    const payload = { contents: chatHistory };
+                    
+                    // IMPORTANT: 
+                    // For use within the Canvas/Preview environment, leave apiKey as "".
+                    // The platform will automatically provide the necessary key for gemini-2.0-flash.
+                    //
+                    // For LOCAL EXECUTION (after downloading this file):
+                    // 1. Get your own Gemini API key from Google AI Studio.
+                    // 2. Replace the empty string below with your actual API key.
+                    //    e.g., const apiKey = "AIzaSyYOUR_REAL_API_KEY_HERE";
+                    const apiKey = "AIzaSyBClPuA4H1LbCTk48-eWG0jDqCZgdl-7Og"; // For Canvas/Preview. Change for local use.
+
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                    try {
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        if (!response.ok) { 
+                             const errorBody = await response.text(); 
+                            throw new Error(`API request failed with status ${response.status} ${response.statusText}. Response: ${errorBody}`);
+                        }
+                        const result = await response.json();
+                        geminiLoader.classList.add('hidden'); 
+                        getProjectIdeasBtn.disabled = false; 
+                        if (result.candidates && result.candidates.length > 0 &&
+                            result.candidates[0].content && result.candidates[0].content.parts &&
+                            result.candidates[0].content.parts.length > 0) {
+                            const text = result.candidates[0].content.parts[0].text;
+                            const ideas = [];
+                            const rawIdeasSegments = text.split(/\n\s*\*\*(.*?)\*\*\s*\n|\n\s*([A-Za-z0-9\s()]+:)\s*\n/).filter(Boolean);
+                            let currentTitle = null;
+                            for (let i = 0; i < rawIdeasSegments.length; i++) {
+                                let segment = rawIdeasSegments[i].trim();
+                                if (segment.endsWith(':') && segment.length < 100 && !currentTitle) {
+                                    currentTitle = segment.slice(0, -1);
+                                } else if (rawIdeasSegments[i-1] && rawIdeasSegments[i-1].startsWith('**') && rawIdeasSegments[i-1].endsWith('**')) {
+                                     currentTitle = rawIdeasSegments[i-1].replace(/\*\*/g, '').trim();
+                                } else if (currentTitle) {
+                                    ideas.push({ title: currentTitle, description: segment.replace(/^\d+\.\s*/, '').trim() });
+                                    currentTitle = null;
+                                } else if (!currentTitle && segment.length > 20) { 
+                                     ideas.push({ title: "Security Project Idea", description: segment.replace(/^\d+\.\s*/, '').trim() });
+                                }
+                            }
+                            if (ideas.length === 0) {
+                                const simpleSplit = text.split(/\n\s*\n+/);
+                                simpleSplit.forEach(ideaText => {
+                                    const lines = ideaText.split('\n').map(l => l.trim()).filter(l => l);
+                                    if (lines.length > 0) {
+                                        const title = lines[0].replace(/\*\*/g, '').replace(/^\d+\.\s*/, '').trim();
+                                        const description = lines.slice(1).join(' ').trim();
+                                        if (description) ideas.push({title, description});
+                                        else ideas.push({title: "Security Project Idea", description: title});
+                                    }
+                                });
+                            }
+                            if (ideas.length > 0) {
+                                ideas.slice(0,3).forEach(idea => {
+                                    const ideaCard = document.createElement('div');
+                                    ideaCard.className = 'idea-card';
+                                    ideaCard.innerHTML = `
+                                        <h4 class="idea-title">${idea.title}</h4>
+                                        <p class="idea-description terminal-text">$> ${idea.description.replace(/\n/g, '<br>$> ')}</p>
+                                    `;
+                                    geminiResponseContainer.appendChild(ideaCard);
+                                });
+                            } else { 
+                                geminiResponseContainer.innerHTML = '<p class="terminal-text">$> Could not parse project ideas. Raw response:</p><pre style="white-space: pre-wrap; word-wrap: break-word; color: #ccc;">' + text + '</pre>';
+                            }
+                        } else { 
+                            geminiResponseContainer.innerHTML = '<p class="terminal-text">$> Error: Could not generate project ideas at this time.</p>';
+                            console.error("Unexpected Gemini API response structure:", result);
+                        }
+                    } catch (error) { 
+                        geminiLoader.classList.add('hidden');
+                        getProjectIdeasBtn.disabled = false;
+                        geminiResponseContainer.innerHTML = `<p class="terminal-text">$> Error: ${error.message}. Check console for details.</p>`;
+                        console.error("Error fetching from Gemini API:", error);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
